@@ -17,26 +17,28 @@ export default function Calculator() {
     }
 
     const updateCalc = (value) => {
-        if (value === "." && calc.includes(".")) return;
-
         let newCalc = calc;
 
-        if (!newCalc && value === ".") {
-            newCalc = "0";
-        }
-
-        newCalc += value;
-
-        if (ops.includes(value) && ops.includes(calc.slice(-1))) {
-            newCalc = calc.slice(0, -1) + value;
-        } else if (ops.includes(value) && !calc) {
+        if (!newCalc && value === "-") {
+            newCalc = "-";
+        } else if (value === "." && !newCalc.slice(-1).match(/[0-9]/)) {
+            newCalc += "0.";
+        } else if (value === "." && !newCalc.includes(".")) {
+            newCalc += ".";
+        } else if (value === "-" && ops.includes(newCalc.slice(-1))) {
+            newCalc += "-";
+        } else if (ops.includes(value) && ops.includes(newCalc.slice(-1))) {
+            newCalc = newCalc.slice(0, -1) + value;
+        } else if (ops.includes(value) && !newCalc) {
             return;
+        } else {
+            newCalc += value;
         }
 
         setCalc(newCalc);
 
         try {
-            const result = eval(newCalc);
+            let result = eval(newCalc);
             if (Number.isFinite(result)) {
                 setResult(result.toString());
             } else {
@@ -56,6 +58,7 @@ export default function Calculator() {
                 setCalc(eval(calc).toString());
                 setResult(result.toFixed(2).toString())
             } else {
+                alert("kos nagoo momen")
                 setResult("");
             }
         } catch (err) {
