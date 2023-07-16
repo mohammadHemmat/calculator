@@ -36,7 +36,7 @@ export default function Calculator() {
             newCalc += "0.";
         } else if (value === "." && !newCalc.includes(".")) {
             newCalc += ".";
-        } else if (value === "-" && ops.includes(newCalc.slice(-1))) {
+        } else if (value === "-" && !newCalc.includes("-")) {
             newCalc += "-";
         } else if (ops.includes(value) && ops.includes(newCalc.slice(-1))) {
             newCalc = newCalc.slice(0, -1) + value;
@@ -67,9 +67,10 @@ export default function Calculator() {
         try {
             const result = eval(calc);
             if (Number.isFinite(result)) {
-                setCalc(eval(calc).toString());
-                setResult(result.toFixed(2).toString());
-                setHistory([...history, { calculation: calc, result: result.toFixed(2) }]);
+                const resultString = result.toFixed(2).toString();
+                setCalc(resultString);
+                setResult(resultString);
+                setHistory([...history, { calculation: calc, result: resultString }]);
             } else {
                 alert("kos nagoo momen");
                 setResult("");
@@ -112,6 +113,7 @@ export default function Calculator() {
             const key = event.key;
             setKeyPressed(key);
             if (key === "Enter") {
+                event.preventDefault();     // prevent form submission
                 calculate();
             } else if (key === "Backspace" || key === "Delete") {
                 deleteLast();
@@ -128,7 +130,7 @@ export default function Calculator() {
             setKeyPressed("");
         };
 
-        document.addEventListener("keydown", handleKeyPress);
+        document.addEventListener("keydown", handleKeyPress);  // listen for "keydown" event
         document.addEventListener("keyup", handleKeyUp);
 
         return () => {
@@ -136,7 +138,6 @@ export default function Calculator() {
             document.removeEventListener("keyup", handleKeyUp);
         };
     }, [calc, deleteLast, clearAll]);
-
     return (
         <div className="App">
             <div className="calculator">
